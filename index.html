@@ -4,29 +4,85 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
         <!-- and it's easy to individually load additional languages -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/yaml.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
         <script>hljs.highlightAll();</script>
         <script>
-            function go(){
-            
-                code = document.getElementById("code");
-                output = document.getElementById("output");
-
-                function updateHljs(){
-                    console.log("updating");
-                    output.textContent = code.value;
-                    hljs.highlightAll();
-                }
-
-                code.onchange = updateHljs;
+        </script>
+        <script>
+            function updateHljs() {
+                console.log("updating");
+                $("#output").text($("#code").val());
+                hljs.highlightAll();
+                $("#lang-id").text(getLanguage());
             }
+
+            function getLanguage() {
+                var classes = $("#output").attr("class").split(" ");
+                var language = "";
+                for(var i = 0; i < classes.length; i++) {
+                    if (classes[i].startsWith("language-")) {
+                        language = classes[i].split("-")[1];
+                    }
+                }
+                if(!language.length){
+                    console.warn("No language found!");
+                }
+                return hljs.getLanguage(language).name;
+            }
+            
+            function isValidLanguage(lang) {
+                return !!hljs.getLanguage(lang);
+            }
+
+
+
+            $(document).ready(function(){
+
+                $("#hint").change(function(e){
+                    // Split out the classes to remove "language-*" from the class list
+                    classes = $("#output").attr("class").split(" ");
+                    classes = classes.filter(function(n){
+                        return !n.startsWith("language");
+                    });
+                    
+                    newHint = $("#hint").val().trim();
+
+                    if(isValidLanguage(newHint)) {
+                        // Add the new language hint
+                        classes.push("language-" + newHint);
+                    } else {
+                        console.warn("Language " + newHint + " not found");
+                    }
+
+                    $("#output").attr("class", classes.join(" "));
+                    updateHljs();
+                });
+
+                $("#code").change(updateHljs);
+                $("#hint").val("json").change();
+            });
         </script>
     </head>
-    <body onload="go();">
+    <body>
+        <p>Put your code here, then click somewhere else on the page.</p>
         <textarea id="code">
-foo: bar
+{
+    foo: "bar"
+}
         </textarea>
-        <pre><code class="language-yaml" id="output">
+
+        <form id="the-form" action="#">
+            <p>Syntax Hinting (json, yaml, etc... or blank to auto-detect):</p>
+            <p></p>
+            <input type="text" id="hint">
+        </form>
+
+        <p>Output using language: <span id="lang-id"></span></p>
+        <pre><code class="" id="output">
             Put code in the textarea above
         </code></pre>
+        
     </body>
 </html>
