@@ -10,7 +10,15 @@
         <script>hljs.highlightAll();</script>
         <script>
         </script>
-        <script>
+        <script id="example-code">
+            /**
+             * The code that drives this page!
+             */
+
+
+            /**
+             * Transfer the code from the textarea into the output area
+             */
             function updateHljs() {
                 console.log("updating");
                 $("#output").text($("#code").val());
@@ -18,12 +26,16 @@
                 $("#lang-id").text(getLanguage());
             }
 
+            /**
+             * Get the formatted language name from hljs
+             */
             function getLanguage() {
                 var classes = $("#output").attr("class").split(" ");
                 var language = "";
                 for(var i = 0; i < classes.length; i++) {
                     if (classes[i].startsWith("language-")) {
                         language = classes[i].split("-")[1];
+                        break;
                     }
                 }
                 if(!language.length){
@@ -32,6 +44,9 @@
                 return hljs.getLanguage(language).name;
             }
             
+            /**
+             * Validates if hljs is aware of the given language
+             */
             function isValidLanguage(lang) {
                 return !!hljs.getLanguage(lang);
             }
@@ -39,7 +54,6 @@
 
 
             $(document).ready(function(){
-
                 $("#hint").change(function(e){
                     // Split out the classes to remove "language-*" from the class list
                     classes = $("#output").attr("class").split(" ");
@@ -61,28 +75,32 @@
                 });
 
                 $("#code").change(updateHljs);
-                $("#hint").val("json").change();
+
+                // Bootstrap the page itself, with the code in this code block
+                $("#code").val($("#example-code").text()).change();
+                $("#hint").val("js").change();
             });
         </script>
     </head>
     <body>
-        <p>Put your code here, then click somewhere else on the page.</p>
-        <textarea id="code">
-{
-    foo: "bar"
-}
-        </textarea>
+        <div style="float:left; width:800px;">
+            <form id="the-form" action="#">
+                <p>Syntax Hinting (json, yaml, etc... or blank to auto-detect):</p>
+                <p></p>
+                <input type="text" id="hint">
+            </form>
 
-        <form id="the-form" action="#">
-            <p>Syntax Hinting (json, yaml, etc... or blank to auto-detect):</p>
-            <p></p>
-            <input type="text" id="hint">
-        </form>
+            <p>Put your code here, then click somewhere else on the page.</p>
+            <textarea id="code" style="width: 100%; height:600px;">
+            </textarea>
 
-        <p>Output using language: <span id="lang-id"></span></p>
-        <pre><code class="" id="output">
-            Put code in the textarea above
-        </code></pre>
+        </div>
+        <div style="float:left;">
+            <p>Output using language: <span id="lang-id"></span></p>
+            <pre><code class="" id="output">
+                Put code in the textarea above
+            </code></pre>
+        </div>
         
     </body>
 </html>
