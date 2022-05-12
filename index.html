@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/a11y-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+        <!-- and it's easy to individually load additional languages -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/languages/yaml.min.js"></script>
+        <script>hljs.highlightAll();</script>
+        <script>
+            function go(){
+            
+                code = document.getElementById("code");
+                output = document.getElementById("output");
+
+                function updateHljs(){
+                    console.log("updating");
+                    output.textContent = code.value;
+                    hljs.highlightAll();
+                }
+
+                code.onchange = updateHljs;
+            }
+        </script>
+    </head>
+    <body onload="go();">
+        <textarea id="code">
+foo: bar
+        </textarea>
+        <pre><code class="language-yaml" id="output">
+            Put code in the textarea above
+        </code></pre>
+    </body>
+</html>
